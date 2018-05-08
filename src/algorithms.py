@@ -2,7 +2,7 @@
 """
 Created on Fri Apr 20 10:34:43 2018
 
-@author: linuxmint
+@author: istancin
 """
 import datetime
 import sys
@@ -12,7 +12,7 @@ from weka.associations import Associator
 
 from helper import args_to_weka_options
 from loaders_savers import data_loader
-from discretization import unsuprevised_discretize
+from discretization import unsupervised_discretize
 from parsers import jrip_parser, apriori_parser
 from converters import arff2df
 
@@ -141,5 +141,5 @@ def main_apriori(result_dest=None):
     """
     data = data_loader()
     data.class_is_last()
-    data = unsuprevised_discretize(data)
+    data = unsupervised_discretize(data)
     Apriori(data, result_dest)

@@ -2,7 +2,7 @@
 """
 Created on Tue Apr 17 00:32:48 2018
 
-@author: linuxmint
+@author: istancin
 """
 import re
 

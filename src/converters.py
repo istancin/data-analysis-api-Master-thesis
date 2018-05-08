@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri May 4 11:04:41 2018
+
+@author: istancin
+"""
 from os import remove
 
 import arff as liacarff
@@ -23,7 +29,7 @@ def df2arff(df):
     :param df: pandas dataframe
     :return: weka arff data
     """
-    from csv_to_arff import load_csv # Imported here because of circular dependencies
+    from loaders_savers import load_csv # Imported here because of circular dependencies
     path = 'tmp_tmp432tmp123_tm_p_blabla3da.csv' # Stupid name to "ensure" we do not override something
     df.to_csv(path, index=False)
     try:

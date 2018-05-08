@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri May 4 11:04:41 2018
+
+@author: istancin
+"""
 from argparse import ArgumentParser
 
 
@@ -168,7 +174,7 @@ def apriori_parser():
     return vars((apriori_parser.parse_known_args())[0]), 'apriori'
 
 
-def unsuprovised_discretize_parser():
+def unsupervised_discretize_parser():
     """
     Unsuprovised discretize parser. Returns tuple with args as dictionary
     and sufix that needs to be removed
