@@ -15,7 +15,7 @@ Requirements:
 Uses:
 - Weka (3.9.2)
 
-### Installation of requirements
+## Installation of requirements
 Following step-by-step installation process is for Linux platforms.
 - Installation of python-weka-wrapper3:  
   Install c/c++ compiler  
@@ -57,7 +57,7 @@ Now clone the application and you are ready to use it.
 git clone https://github.com/istancin/master-thesis.git
 ```
 
-### Instruction manual
+## Instruction manual
 Position yourself in src folder and type:
 ```shell
 python3 main.py
@@ -94,9 +94,9 @@ This will raise an exception because there are some required arguments we need t
 
 There is many more arguments that can be passed, but these are most important. For all other possible arguments see parsers.py. In examples we will show some cases of usage.
 
-### Examples of usage
+## Examples of usage
 We will show some examples of usage on test_dataset.csv. Dataset consists of team player tracking statistics of every game (almost every, 8 games are missing) in 2017-18 NBA season. Dataset has 24 attributes and 2444 records, two records per game (for each team one record).  
-#### JRip example:
+### JRip example:
 ```shell
 python3 main.py --algorithm JRip --path test_dataset.csv --filetype csv --label WINNER --L WINNER:1,0 --excludecol PTS,FG_PCT,WINS,WIN_GROUP --excluderow WIN_GROUP==36-49;WINS<25 --Njrip 100
 ```
@@ -152,7 +152,7 @@ This excludes rows where WIN_GROUP is equal to '36-49' and where WINS are less t
 ```
 This is parameter for JRip algorithm (-N). Set the minimal weights of instances within a split.
 
-#### Apriori example:
+### Apriori example:
 ```shell
 python3 main.py --algorithm Apriori --path test_dataset.csv --filetype csv --label WIN_GROUP --L WIN_GROUP:50+,rest --discretize yes --includecol AST,SAST,FTAST,PASS,TCHS,DST,UFGM,UFGA,UFG_PCT,WINNER,WIN_GROUP --Capriori 0.5 --Napriori 15 
 ```
