@@ -101,7 +101,8 @@ def data_loader_parser():
     dl_parser = ArgumentParser(description='Data loader parser.')
     dl_parser.add_argument('--path', help='Path to the input file')
     dl_parser.add_argument('--dest', help='Path to the output file')
-    dl_parser.add_argument('--filetype', choices=['csv', 'arff'], help='Type of the input file')
+    dl_parser.add_argument('--filetype', choices=['csv', 'arff'], default='csv',
+                           help='Type of the input file')
     return vars((dl_parser.parse_known_args())[0])
 
 
@@ -112,9 +113,40 @@ def main_api_parser():
     :return: args as dictionary
     """
     main_parser = ArgumentParser(description='Main parser for whole api.')
-    main_parser.add_argument('--algorithm', choices=['JRip', 'Apriori'], help='Which algorithm to use.')
+    main_parser.add_argument('--algorithm', choices=['JRip', 'Apriori', 'RandomForest'], help='Which algorithm to use.')
+    main_parser.add_argument('--prediction', choices=['no', 'yes'], default='yes', help='Are we predicting the data?')
     main_parser.add_argument('--resultdest', help = 'Destination of the file in which rules will be stored (default: no file - print to console')
     return vars((main_parser.parse_known_args())[0])
+    
+    
+def create_prediction_data_parser():
+    """
+    Create prediction data parser.
+
+    :return: args as dictionary
+    """
+    cpd_parser = ArgumentParser(description='Create prediction data parser.')
+    cpd_parser.add_argument('--average-n', help='Number of games from which we calculate the average.')
+    cpd_parser.add_argument('--label', help = 'Class label that will be set as last label.')
+    cpd_parser.add_argument('--exclude-game-team-id', default='no', choices=['no','yes'],
+                           help='If yes, then GAME_ID and TEAM_ID will be removed from dataset.')
+    return vars((cpd_parser.parse_known_args())[0])
+    
+    
+def evaluate_parser():
+    """
+    Parser for evaluation of algorithms.
+
+    :return: args as dictionary
+    """
+    evaluate_parser = ArgumentParser(description='Evaluation parser.')
+    evaluate_parser.add_argument('--evaluation', choices=['train_test', 'cross_validate', 'test_model'], default='test_model', 
+                                 help='What evaluation to use.')
+    evaluate_parser.add_argument('--folds', default=10, 
+                                 help = 'Number of folds to use if cross_validation is selected.')
+    evaluate_parser.add_argument('--train-size', default=66.0, 
+                                 help = 'Percent of dataset that will be used for training.')
+    return vars((evaluate_parser.parse_known_args())[0])
 
 
 def jrip_parser():
@@ -205,3 +237,49 @@ def unsupervised_discretize_parser():
     unsup_discretize.add_argument('--spread-attribute-weightunsdisc', action='store_const', const="",
                                   help='When generating binary attributes, spread weight of old attribute across new attributes. Do not give each new attribute the old weight.')
     return vars((unsup_discretize.parse_known_args())[0]), 'unsdisc'
+    
+    
+def rf_parser():
+    """
+    RandomForest parser.  Returns tuple with args as dictionary
+    and sufix that needs to be removed.
+
+    :return: tuple
+    """
+    rf_parser = ArgumentParser(description='Parser for RandomForest usage')
+    rf_parser.add_argument('--Prf', default='100', help='Size of each bag, as a percentage of the training set size. (default 100)')
+    rf_parser.add_argument('--Orf', action='store_const', const="", help='Calculate the out of bag error.')
+    rf_parser.add_argument('--store-out-of-bag-predictionsrf', action='store_const', const="", help='Whether to store out of bag predictions in internal evaluation object.')
+    rf_parser.add_argument('--output-out-of-bag-complexity-statisticsrf', action='store_const', const="",
+                                help='Whether to output complexity-based statistics when out-of-bag evaluation is performed.')
+    rf_parser.add_argument('--printrf', action='store_const', const="", help='Print the individual classifiers in the output')
+    rf_parser.add_argument('--attribute-importancerf', action='store_const', const="",
+                                help='Compute and output attribute importance (mean impurity decrease method)')
+    rf_parser.add_argument('--Irf',
+                                help='Number of iterations.(current value 100)')
+    rf_parser.add_argument('--num-slotsef', 
+                                help='Number of execution slots.(default 1 - i.e. no parallelism)(use 0 to auto-detect number of cores)')
+    rf_parser.add_argument('--Krf',  default='0', 
+                                help='Number of attributes to randomly investigate. (default 0)(<1 = int(log_2(#predictors)+1)).')
+    rf_parser.add_argument('--Mrf', default='1', 
+                                help='Set minimum number of instances per leaf.(default 1)')
+    rf_parser.add_argument('--Vrf',
+                                help='Set minimum numeric class variance proportion of train variance for split (default 1e-3).')
+    rf_parser.add_argument('--Srf', default='1', 
+                                help='Seed for random number generator. (default 1)')
+    rf_parser.add_argument('--depthrf', default='0', 
+                                help='The maximum depth of the tree, 0 for unlimited. (default 0)')
+    rf_parser.add_argument('--Nrf', default='0', help='Number of folds for backfitting (default 0, no backfitting).')
+    rf_parser.add_argument('--Urf', action='store_const', const="",
+                                help='Allow unclassified instances.')
+    rf_parser.add_argument('--Brf', action='store_const', const="",
+                                help='Break ties randomly when several attributes look equally good.')
+    rf_parser.add_argument('--output-debug-inforf', action='store_const', const="",
+                                help='If set, classifier is run in debug mode and may output additional info to the console')
+    rf_parser.add_argument('--do-not-check-capabilitiesrf', action='store_const', const="",
+                                help='If set, classifier capabilities are not checked before classifier is built (use with caution).')
+    rf_parser.add_argument('--num-decimal-placesrf',
+                                help='The number of decimal places for the output of numbers in the model (default 2).')
+    rf_parser.add_argument('--batch-sizerf',
+                                help='The desired batch size for batch prediction  (default 100).')
+    return vars((rf_parser.parse_known_args())[0]), 'rf'

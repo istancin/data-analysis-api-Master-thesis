@@ -9,11 +9,12 @@ import sys
 
 from weka.classifiers import Classifier, Evaluation
 from weka.associations import Associator
+from weka.core.classes import Random
 
-from helper import args_to_weka_options
+from helper import args_to_weka_options, create_prediction_data
 from loaders_savers import data_loader
 from discretization import unsupervised_discretize
-from parsers import jrip_parser, apriori_parser
+from parsers import jrip_parser, apriori_parser, rf_parser, evaluate_parser
 from converters import arff2df
 
 
@@ -32,8 +33,7 @@ def JRip(data, result_dest=None):
     jrip = Classifier(classname="weka.classifiers.rules.JRip",
                       options=args_to_weka_options(args, _sufix))
     jrip.build_classifier(data)
-    evaluation = Evaluation(data)
-    evaluation.test_model(jrip, data)
+    evaluation = __evaluate(jrip, data)
 
     if result_dest:
         with open(result_dest, 'a') as file:
@@ -115,10 +115,75 @@ def __apriori_print_header(apriori, header):
     apriori_header += "\nArguments of Apriori algorithm: \n\t"
     apriori_header += apriori.to_commandline() + '\n'
     return apriori_header
+    
+    
+def __evaluate(classifier, data):
+    """
+    Private function that makes evaluation of classifier on
+    given data. With command line arguments we can chose which 
+    evaluation to use.
+
+    :param classifier: Classifier
+    :param data: weka arff data
+    :return: Evaluation
+    """
+    args = evaluate_parser()
+    evaluation = Evaluation(data)
+    if args['evaluation'] == 'train_test':
+        evaluation.evaluate_train_test_split(classifier, data, int(args['train_size']), Random(1))
+    elif args['evaluation'] == 'cross_validate':
+        evaluation.crossvalidate_model(classifier, data, int(args['folds']), Random(42))
+    else:
+        evaluation.test_model(classifier, data)
+    return evaluation
+    
+    
+def __random_forest_print_header(random_forest, header):
+    """
+    Private function that creates a header that is printed
+    before evaluation of random forest.
+
+    :param random_forest: random forest class
+    :param header: string
+    :return: string
+    """
+    rf_header = "\n\n\n========== Random Forest =========\n"
+    rf_header += "Command line:\n\t" + str(sys.argv)
+    rf_header += "\nStart time: \n\t" + str(datetime.datetime.now())
+    rf_header += "\nHeader of dataset:\n\t" + str(header)
+    rf_header += "\nArguments of Apriori algorithm: \n\t"
+    rf_header += random_forest.to_commandline() + '\n'
+    return rf_header
 
 
+def RandomForrest(data, result_dest):
+    """
+    RandomForest classifier. Information
+    about parameters of algorithm and ruleset are printed to console
+    or written to file depending on result_dest param.
 
-def main_JRip(result_dest=None):
+    :param apriori: apriori class
+    :param header: string
+    :return: string
+    """
+    args, _sufix= rf_parser()
+    random_forest = Classifier(classname="weka.classifiers.trees.RandomForest",
+                      options=args_to_weka_options(args, _sufix))
+    random_forest.build_classifier(data)
+    evaluation = __evaluate(random_forest, data)
+
+    if result_dest:
+        with open(result_dest, 'a') as file:
+            file.write(__random_forest_print_header(random_forest, __get_header_of_data(data)))
+            file.write(str(random_forest))
+            file.write(evaluation.summary())
+    else:
+        print(__random_forest_print_header(random_forest, __get_header_of_data(data)))
+        print(random_forest)
+        print(evaluation.summary())
+
+
+def main_JRip(result_dest=None, prediction=None):
     """
     Function that is caled for usage of JRip. Based on command
     line arguments, data will be loaded and JRip rules will be
@@ -127,6 +192,8 @@ def main_JRip(result_dest=None):
     :param result_dest: results destination
     """
     data = data_loader()
+    if prediction:
+        data = create_prediction_data(data)
     data.class_is_last()
     JRip(data, result_dest)
 
@@ -143,3 +210,17 @@ def main_apriori(result_dest=None):
     data.class_is_last()
     data = unsupervised_discretize(data)
     Apriori(data, result_dest)
+    
+    
+def main_random_forest(result_dest=None):
+    """
+    Function that is caled for usage of RandomForest. Based on command
+    line arguments, data will be loaded and RandomForest classifier 
+    will be built.
+
+    :param result_dest: results destination
+    """
+    data = data_loader()
+    data = create_prediction_data(data)
+    data.class_is_last()
+    RandomForrest(data, result_dest)
