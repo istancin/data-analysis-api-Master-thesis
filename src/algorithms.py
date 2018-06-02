@@ -18,32 +18,46 @@ from parsers import jrip_parser, apriori_parser, rf_parser, evaluate_parser, log
 from converters import arff2df
 
 
-def JRip(data, result_dest=None):
-    """
-    Function for building ruleset with JRip (Ripper) algorithm. Evaluation is
-    also done. Information about parameters of algorithm, ruleset and
-    evaluation results are printed to console or writen to file depending on
-    result_dest param.
+parsers_dict = {'JRip': jrip_parser,
+                'Apriori': apriori_parser,
+                'RandomForest': rf_parser,
+                'Logistic': logistic_parser
+                }
+                
+algorithms_path_dict = {'JRip': "weka.classifiers.rules.JRip",
+                        'Apriori': "weka.associations.Apriori",
+                        'RandomForest': "weka.classifiers.trees.RandomForest",
+                        'Logistic': "weka.classifiers.functions.Logistic"
+                        }
 
+
+def __build_classifier(algorithm_name, data, result_dest=None):
+    """
+    Function for building clasifier based on arguments we send to function.
+    algorithm_name is for example JRip or Logistic or RandomForest...
+    algorithm_path is for example weka.classifiers.rules.JRip, or 
+    weka.classifiers.trees.RandomForest, ...
+
+    :param algorithm_name: string
+    :param algorithm_path: string
     :param data: weka arff data
     :param result_dest: results destination
     :return: None
     """
-    name = "JRip"
-    args, _sufix= jrip_parser()
-    jrip = Classifier(classname="weka.classifiers.rules.JRip",
+    args, _sufix= parsers_dict[algorithm_name]()#jrip_parser()
+    classifier = Classifier(classname=algorithms_path_dict[algorithm_name],
                       options=args_to_weka_options(args, _sufix))
-    jrip.build_classifier(data)
-    evaluation = __evaluate(jrip, data)
+    classifier.build_classifier(data)
+    evaluation = __evaluate(classifier, data)
 
     if result_dest:
         with open(result_dest, 'a') as file:
-            file.write(__print_algorithm_header(jrip.to_commandline(), __get_header_of_data(data), name))
-            file.write(str(jrip))
+            file.write(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
+            file.write(str(classifier))
             file.write(evaluation.summary())
     else:
-        print(__print_algorithm_header(jrip.to_commandline(), __get_header_of_data(data), name))
-        print(jrip)
+        print(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
+        print(classifier)
         print(evaluation.summary())
 
 
@@ -58,7 +72,7 @@ def __get_header_of_data(data):
     return list(df.columns.values)
 
 
-def Apriori(data, result_dest=None):
+def __build_associations(algorithm_name, data, result_dest=None):
     """
     Function for building ruleset with Apriori algorithm. Information
     about parameters of algorithm and ruleset are printed to console
@@ -68,19 +82,18 @@ def Apriori(data, result_dest=None):
     :param result_dest: results destination
     :return: None
     """
-    name = "Apriori"
-    args, _sufix = apriori_parser()
-    apriori = Associator(classname="weka.associations.Apriori",
+    args, _sufix = parsers_dict[algorithm_name]()#apriori_parser()
+    associator = Associator(classname=algorithms_path_dict[algorithm_name],
                       options=args_to_weka_options(args, _sufix))
-    apriori.build_associations(data)
+    associator.build_associations(data)
 
     if result_dest:
         with open(result_dest, 'a') as file:
-            file.write(__print_algorithm_header(apriori.to_commandline(), __get_header_of_data(data), name))
-            file.write(str(apriori))
+            file.write(__print_algorithm_header(associator.to_commandline(), __get_header_of_data(data), algorithm_name))
+            file.write(str(associator))
     else:
-        print(__print_algorithm_header(apriori.to_commandline(), __get_header_of_data(data), name))
-        print(str(apriori))
+        print(__print_algorithm_header(associator.to_commandline(), __get_header_of_data(data), algorithm_name))
+        print(str(associator))
     
     
 def __evaluate(classifier, data):
@@ -102,33 +115,6 @@ def __evaluate(classifier, data):
     else:
         evaluation.test_model(classifier, data)
     return evaluation
-
-
-def RandomForrest(data, result_dest):
-    """
-    RandomForest classifier. Information
-    about parameters of algorithm and ruleset are printed to console
-    or written to file depending on result_dest param.
-
-    :param apriori: apriori class
-    :param header: string
-    :return: string
-    """
-    args, _sufix= rf_parser()
-    random_forest = Classifier(classname="weka.classifiers.trees.RandomForest",
-                      options=args_to_weka_options(args, _sufix))
-    random_forest.build_classifier(data)
-    evaluation = __evaluate(random_forest, data)
-
-    if result_dest:
-        with open(result_dest, 'a') as file:
-            file.write(__print_algorithm_header(random_forest.to_commandline(), __get_header_of_data(data), "Random Forest"))
-            file.write(str(random_forest))
-            file.write(evaluation.summary())
-    else:
-        print(__print_algorithm_header(random_forest.to_commandline(), __get_header_of_data(data), "Random Forest"))
-        print(random_forest)
-        print(evaluation.summary())
         
         
 def __print_algorithm_header(algorithm_cmd, data_header, algorithm_name):
@@ -149,49 +135,7 @@ def __print_algorithm_header(algorithm_cmd, data_header, algorithm_name):
     return header
         
         
-def Logistic(data, result_dest):
-    """
-    RandomForest classifier. Information
-    about parameters of algorithm and ruleset are printed to console
-    or written to file depending on result_dest param.
-
-    :param apriori: apriori class
-    :param header: string
-    :return: string
-    """
-    args, _sufix= logistic_parser()
-    logistic = Classifier(classname="weka.classifiers.functions.Logistic",
-                      options=args_to_weka_options(args, _sufix))
-    logistic.build_classifier(data)
-    evaluation = __evaluate(logistic, data)
-
-    if result_dest:
-        with open(result_dest, 'a') as file:
-            file.write(__print_algorithm_header(logistic.to_commandline(), __get_header_of_data(data), "Logistic Regression"))
-            file.write(str(logistic))
-            file.write(evaluation.summary())
-    else:
-        print(__print_algorithm_header(logistic.to_commandline(), __get_header_of_data(data), "Logistic Regression"))
-        print(logistic)
-        print(evaluation.summary())
-
-
-def main_logistic(result_dest=None):
-    """
-    Function that is caled for usage of RandomForest. Based on command
-    line arguments, data will be loaded and RandomForest classifier 
-    will be built.
-
-    :param result_dest: results destination
-    """
-    data = data_loader()
-    data = create_prediction_data(data)
-    data.class_is_last()
-    Logistic(data, result_dest)
-    
-
-
-def main_JRip(result_dest=None, prediction=None):
+def main_clasifiers(algorithm_name, result_dest=None, prediction=None):
     """
     Function that is caled for usage of JRip. Based on command
     line arguments, data will be loaded and JRip rules will be
@@ -200,13 +144,13 @@ def main_JRip(result_dest=None, prediction=None):
     :param result_dest: results destination
     """
     data = data_loader()
-    if prediction:
+    if prediction == 'yes':
         data = create_prediction_data(data)
     data.class_is_last()
-    JRip(data, result_dest)
+    __build_classifier(algorithm_name, data, result_dest)
 
 
-def main_apriori(result_dest=None):
+def main_associations(algorithm_name, result_dest=None, prediction=None):
     """
     Function that is caled for usage of Apriori. Based on command
     line arguments, data will be loaded and Apriori rules will be
@@ -215,20 +159,8 @@ def main_apriori(result_dest=None):
     :param result_dest: results destination
     """
     data = data_loader()
+    if prediction == 'yes':
+        data = create_prediction_data(data)
     data.class_is_last()
     data = unsupervised_discretize(data)
-    Apriori(data, result_dest)
-    
-    
-def main_random_forest(result_dest=None):
-    """
-    Function that is caled for usage of RandomForest. Based on command
-    line arguments, data will be loaded and RandomForest classifier 
-    will be built.
-
-    :param result_dest: results destination
-    """
-    data = data_loader()
-    data = create_prediction_data(data)
-    data.class_is_last()
-    RandomForrest(data, result_dest)
+    __build_associations(algorithm_name, data, result_dest=result_dest)
