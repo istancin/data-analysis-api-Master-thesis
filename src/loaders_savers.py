@@ -11,7 +11,8 @@ from weka.core.converters import Loader, Saver
 
 from discretization import unsupervised_discretize
 from parsers import process_data_parser, csv_loader_parser, data_loader_parser, arff_saver_parser, csv_saver_parser
-from helper import select_needed_columns, exclude_rows_from_data, args_to_weka_options, set_as_last_label, create_nominal_value
+from helper import args_to_weka_options
+from data_manipulation import select_needed_columns, exclude_rows_from_data, set_as_last_label, create_nominal_value
 
 
 def load_csv(path):

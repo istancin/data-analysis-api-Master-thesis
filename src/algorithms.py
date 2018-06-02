@@ -7,15 +7,16 @@ Created on Fri Apr 20 10:34:43 2018
 import datetime
 import sys
 
-from weka.classifiers import Classifier, Evaluation
+from weka.classifiers import Classifier
 from weka.associations import Associator
-from weka.core.classes import Random
 
-from helper import args_to_weka_options, create_prediction_data
+from helper import args_to_weka_options
+from data_manipulation import create_prediction_data
 from loaders_savers import data_loader
 from discretization import unsupervised_discretize
-from parsers import jrip_parser, apriori_parser, rf_parser, evaluate_parser, logistic_parser
+from parsers import jrip_parser, apriori_parser, rf_parser, logistic_parser
 from converters import arff2df
+from evaluation import evaluate
 
 
 parsers_dict = {'JRip': jrip_parser,
@@ -48,7 +49,7 @@ def __build_classifier(algorithm_name, data, result_dest=None):
     classifier = Classifier(classname=algorithms_path_dict[algorithm_name],
                       options=args_to_weka_options(args, _sufix))
     classifier.build_classifier(data)
-    evaluation = __evaluate(classifier, data)
+    evaluation = evaluate(classifier, data)
 
     if result_dest:
         with open(result_dest, 'a') as file:
@@ -94,27 +95,6 @@ def __build_associations(algorithm_name, data, result_dest=None):
     else:
         print(__print_algorithm_header(associator.to_commandline(), __get_header_of_data(data), algorithm_name))
         print(str(associator))
-    
-    
-def __evaluate(classifier, data):
-    """
-    Private function that makes evaluation of classifier on
-    given data. With command line arguments we can chose which 
-    evaluation to use.
-
-    :param classifier: Classifier
-    :param data: weka arff data
-    :return: Evaluation
-    """
-    args = evaluate_parser()
-    evaluation = Evaluation(data)
-    if args['evaluation'] == 'train_test':
-        evaluation.evaluate_train_test_split(classifier, data, int(args['train_size']), Random(1))
-    elif args['evaluation'] == 'cross_validate':
-        evaluation.crossvalidate_model(classifier, data, int(args['folds']), Random(42))
-    else:
-        evaluation.test_model(classifier, data)
-    return evaluation
         
         
 def __print_algorithm_header(algorithm_cmd, data_header, algorithm_name):
