@@ -8,7 +8,7 @@ import traceback
 
 from weka.core import jvm
 
-from algorithms import main_JRip, main_apriori, main_random_forest
+from algorithms import main_JRip, main_apriori, main_random_forest, main_logistic
 from parsers import main_api_parser
 
 
@@ -29,6 +29,8 @@ def main_api():
         main_apriori(result_dest=args['resultdest'])
     elif args['algorithm'] == 'RandomForest':
         main_random_forest(result_dest=args['resultdest'])
+    elif args['algorithm'] == 'Logistic':
+        main_logistic(result_dest=args['resultdest'])
     else:
         raise ValueError("Invalid --algorithm parameter.")
 

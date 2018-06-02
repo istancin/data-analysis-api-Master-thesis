@@ -113,7 +113,7 @@ def main_api_parser():
     :return: args as dictionary
     """
     main_parser = ArgumentParser(description='Main parser for whole api.')
-    main_parser.add_argument('--algorithm', choices=['JRip', 'Apriori', 'RandomForest'], help='Which algorithm to use.')
+    main_parser.add_argument('--algorithm', choices=['JRip', 'Apriori', 'RandomForest', 'Logistic'], help='Which algorithm to use.')
     main_parser.add_argument('--prediction', choices=['no', 'yes'], default='yes', help='Are we predicting the data?')
     main_parser.add_argument('--resultdest', help = 'Destination of the file in which rules will be stored (default: no file - print to console')
     return vars((main_parser.parse_known_args())[0])
@@ -283,3 +283,17 @@ def rf_parser():
     rf_parser.add_argument('--batch-sizerf',
                                 help='The desired batch size for batch prediction  (default 100).')
     return vars((rf_parser.parse_known_args())[0]), 'rf'
+    
+    
+def logistic_parser():
+    """
+    Logistic regression parser.  Returns tuple with args as dictionary
+    and sufix that needs to be removed.
+
+    :return: tuple
+    """
+    lr_parser = ArgumentParser(description='Logistic regression parser')
+    lr_parser.add_argument('--Dlogistic', action='store_const', const="", help='Turn on debugging output.')
+    lr_parser.add_argument('--Rlogistic', help='Set the ridge in the log-likelihood.')
+    lr_parser.add_argument('--Mlogistic', default='-1', help='Set the maximum number of iterations (default -1, until convergence).')
+    return vars((lr_parser.parse_known_args())[0]), 'logistic'

@@ -14,7 +14,7 @@ from weka.core.classes import Random
 from helper import args_to_weka_options, create_prediction_data
 from loaders_savers import data_loader
 from discretization import unsupervised_discretize
-from parsers import jrip_parser, apriori_parser, rf_parser, evaluate_parser
+from parsers import jrip_parser, apriori_parser, rf_parser, evaluate_parser, logistic_parser
 from converters import arff2df
 
 
@@ -29,6 +29,7 @@ def JRip(data, result_dest=None):
     :param result_dest: results destination
     :return: None
     """
+    name = "JRip"
     args, _sufix= jrip_parser()
     jrip = Classifier(classname="weka.classifiers.rules.JRip",
                       options=args_to_weka_options(args, _sufix))
@@ -37,31 +38,13 @@ def JRip(data, result_dest=None):
 
     if result_dest:
         with open(result_dest, 'a') as file:
-            file.write(__jrip_print_header(jrip, __get_header_of_data(data)))
+            file.write(__print_algorithm_header(jrip.to_commandline(), __get_header_of_data(data), name))
             file.write(str(jrip))
             file.write(evaluation.summary())
     else:
-        print(__jrip_print_header(jrip, __get_header_of_data(data)))
+        print(__print_algorithm_header(jrip.to_commandline(), __get_header_of_data(data), name))
         print(jrip)
         print(evaluation.summary())
-
-
-def __jrip_print_header(jrip, header):
-    """
-    Private function that creates a header that is printed
-    before rules generated with JRip.
-
-    :param jrip: jrip class
-    :param header: string
-    :return: string
-    """
-    jrip_header = "\n\n\n========== JRip =========\n"
-    jrip_header += "Command line:\n\t" + str(sys.argv)
-    jrip_header += "\nStart time: \n\t" + str(datetime.datetime.now())
-    jrip_header += "\nHeader of dataset:\n\t" + str(header)
-    jrip_header += "\nArguments of JRip algorithm: \n\t"
-    jrip_header += jrip.to_commandline() + '\n'
-    return jrip_header
 
 
 def __get_header_of_data(data):
@@ -85,6 +68,7 @@ def Apriori(data, result_dest=None):
     :param result_dest: results destination
     :return: None
     """
+    name = "Apriori"
     args, _sufix = apriori_parser()
     apriori = Associator(classname="weka.associations.Apriori",
                       options=args_to_weka_options(args, _sufix))
@@ -92,29 +76,11 @@ def Apriori(data, result_dest=None):
 
     if result_dest:
         with open(result_dest, 'a') as file:
-            file.write(__apriori_print_header(apriori, __get_header_of_data(data)))
+            file.write(__print_algorithm_header(apriori.to_commandline(), __get_header_of_data(data), name))
             file.write(str(apriori))
     else:
-        print(__apriori_print_header(apriori, __get_header_of_data(data)))
+        print(__print_algorithm_header(apriori.to_commandline(), __get_header_of_data(data), name))
         print(str(apriori))
-
-
-def __apriori_print_header(apriori, header):
-    """
-    Private function that creates a header that is printed
-    before rules generated with Apriori.
-
-    :param apriori: apriori class
-    :param header: string
-    :return: string
-    """
-    apriori_header = "\n\n\n========== Apriori =========\n"
-    apriori_header += "Command line:\n\t" + str(sys.argv)
-    apriori_header += "\nStart time: \n\t" + str(datetime.datetime.now())
-    apriori_header += "\nHeader of dataset:\n\t" + str(header)
-    apriori_header += "\nArguments of Apriori algorithm: \n\t"
-    apriori_header += apriori.to_commandline() + '\n'
-    return apriori_header
     
     
 def __evaluate(classifier, data):
@@ -136,24 +102,6 @@ def __evaluate(classifier, data):
     else:
         evaluation.test_model(classifier, data)
     return evaluation
-    
-    
-def __random_forest_print_header(random_forest, header):
-    """
-    Private function that creates a header that is printed
-    before evaluation of random forest.
-
-    :param random_forest: random forest class
-    :param header: string
-    :return: string
-    """
-    rf_header = "\n\n\n========== Random Forest =========\n"
-    rf_header += "Command line:\n\t" + str(sys.argv)
-    rf_header += "\nStart time: \n\t" + str(datetime.datetime.now())
-    rf_header += "\nHeader of dataset:\n\t" + str(header)
-    rf_header += "\nArguments of Apriori algorithm: \n\t"
-    rf_header += random_forest.to_commandline() + '\n'
-    return rf_header
 
 
 def RandomForrest(data, result_dest):
@@ -174,13 +122,73 @@ def RandomForrest(data, result_dest):
 
     if result_dest:
         with open(result_dest, 'a') as file:
-            file.write(__random_forest_print_header(random_forest, __get_header_of_data(data)))
+            file.write(__print_algorithm_header(random_forest.to_commandline(), __get_header_of_data(data), "Random Forest"))
             file.write(str(random_forest))
             file.write(evaluation.summary())
     else:
-        print(__random_forest_print_header(random_forest, __get_header_of_data(data)))
+        print(__print_algorithm_header(random_forest.to_commandline(), __get_header_of_data(data), "Random Forest"))
         print(random_forest)
         print(evaluation.summary())
+        
+        
+def __print_algorithm_header(algorithm_cmd, data_header, algorithm_name):
+    """
+    Private function that creates a header for given algorithm.
+
+    :param algorithm_cmd: string
+    :param header: string
+    :param name: string
+    :return: string
+    """
+    header = "\n\n\n========== " + algorithm_name + "=========\n"
+    header += "Command line:\n\t" + str(sys.argv)
+    header += "\nStart time: \n\t" + str(datetime.datetime.now())
+    header += "\nHeader of dataset:\n\t" + str(data_header)
+    header += "\nArguments of algorithm: \n\t"
+    header += algorithm_cmd + '\n'
+    return header
+        
+        
+def Logistic(data, result_dest):
+    """
+    RandomForest classifier. Information
+    about parameters of algorithm and ruleset are printed to console
+    or written to file depending on result_dest param.
+
+    :param apriori: apriori class
+    :param header: string
+    :return: string
+    """
+    args, _sufix= logistic_parser()
+    logistic = Classifier(classname="weka.classifiers.functions.Logistic",
+                      options=args_to_weka_options(args, _sufix))
+    logistic.build_classifier(data)
+    evaluation = __evaluate(logistic, data)
+
+    if result_dest:
+        with open(result_dest, 'a') as file:
+            file.write(__print_algorithm_header(logistic.to_commandline(), __get_header_of_data(data), "Logistic Regression"))
+            file.write(str(logistic))
+            file.write(evaluation.summary())
+    else:
+        print(__print_algorithm_header(logistic.to_commandline(), __get_header_of_data(data), "Logistic Regression"))
+        print(logistic)
+        print(evaluation.summary())
+
+
+def main_logistic(result_dest=None):
+    """
+    Function that is caled for usage of RandomForest. Based on command
+    line arguments, data will be loaded and RandomForest classifier 
+    will be built.
+
+    :param result_dest: results destination
+    """
+    data = data_loader()
+    data = create_prediction_data(data)
+    data.class_is_last()
+    Logistic(data, result_dest)
+    
 
 
 def main_JRip(result_dest=None, prediction=None):
