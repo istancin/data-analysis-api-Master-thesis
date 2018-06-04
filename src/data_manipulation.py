@@ -230,8 +230,8 @@ def __put_one_game_in_one_row(df):
     for game_id in df['GAME_ID']:
         if game_id == game_id_prev:
             continue
-        ind_w = df.loc[(df['GAME_ID'] == game_id) & (df['WINNER'] == str(1))].index[0]
-        ind_l = df.loc[(df['GAME_ID'] == game_id) & (df['WINNER'] == str(0))].index[0]
+        ind_w = df.loc[(df['GAME_ID'] == game_id) & ((df['WINNER'].astype('str') == str(1.0)) | (df['WINNER'].astype('str') == str(1)))].index[0]
+        ind_l = df.loc[(df['GAME_ID'] == game_id) & ((df['WINNER'].astype('str') == str(0.0)) | (df['WINNER'].astype('str') == str(0)))].index[0]
         df.loc[ind_w, new_labels] = list(df.loc[ind_l, labels])
         df.loc[ind_l, new_labels] = list(df.loc[ind_w, labels])
         game_id_prev = game_id

@@ -383,9 +383,9 @@ def poly_kernel_parser():
     poly_kernel_parser = ArgumentParser(description='Parser for PolyKernel usage')
     poly_kernel_parser.add_argument('--E-polyk', 
                             help='The Exponent to use. (default: 1.0)')
-    poly_kernel_parser.add_argument('--L-polyk', help='Use lower-order terms. (default: no)')
+    poly_kernel_parser.add_argument('--L-polyk', action='store_const', const="", help='Use lower-order terms. (default: no)')
     poly_kernel_parser.add_argument('--C-polyk',
                                 help='The size of the cache (a prime number), 0 for full cache and -1 to turn it off. (default: 250007)')
-    poly_kernel_parser.add_argument('--output-debug-info-polyk', help='Enables debugging output (if available) to be printed. (default: off)')
+    poly_kernel_parser.add_argument('--output-debug-info-polyk', action='store_const', const="", help='Enables debugging output (if available) to be printed. (default: off)')
     poly_kernel_parser.add_argument('--no-checks-polyk', help="Turns off all checks - use with caution! (default: checks on)")
     return vars((poly_kernel_parser.parse_known_args())[0]), '-polyk'
