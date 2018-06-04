@@ -45,9 +45,9 @@ def args_to_weka_options(args, sufix):
         return __args_to_weka_options(args)
     result = []
     for k,v in args.items():
-        if v:
+        if v and k[-len(sufix):] == sufix:
             result.append("-" + k[:-len(sufix)])
             result.append(v)
-        elif v == "":
+        elif v == "" and k[-len(sufix):] == sufix:
             result.append("-" + k[:-len(sufix)])
     return result

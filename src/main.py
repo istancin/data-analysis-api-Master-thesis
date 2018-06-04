@@ -28,6 +28,12 @@ def main_api():
         main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
     elif args['algorithm'] == 'Logistic':
         main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+    elif args['algorithm'] == 'J48':
+        main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+    elif args['algorithm'] == 'NaiveBayes':
+        main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+    elif args['algorithm'] == 'SMO':
+        main_kernel_clasifiers(args['algorithm'], args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
     else:
         raise ValueError("Invalid --algorithm parameter.")
 

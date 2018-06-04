@@ -97,8 +97,8 @@ def __process_data(data):
     :return: weka arff data
     """
     args = process_data_parser()
-    if args['L'] and 'rest' in args['L']:
-        data = create_nominal_value(data, args['L'])
+    if args['L_csvload'] and 'rest' in args['L_csvload']:
+        data = create_nominal_value(data, args['L_csvload'])
     if args['excluderow']:
         data = exclude_rows_from_data(data, args)
     if args['includecol'] or args['excludecol']:

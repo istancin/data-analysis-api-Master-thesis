@@ -7,14 +7,14 @@ Created on Fri Apr 20 10:34:43 2018
 import datetime
 import sys
 
-from weka.classifiers import Classifier
+from weka.classifiers import Classifier, Kernel
 from weka.associations import Associator
 
 from helper import args_to_weka_options
 from data_manipulation import create_prediction_data
 from loaders_savers import data_loader
 from discretization import unsupervised_discretize
-from parsers import jrip_parser, apriori_parser, rf_parser, logistic_parser
+from parsers import jrip_parser, apriori_parser, rf_parser, logistic_parser, j48_parser, naive_bayes_parser, smo_parser, poly_kernel_parser
 from converters import arff2df
 from evaluation import evaluate
 
@@ -22,14 +22,26 @@ from evaluation import evaluate
 parsers_dict = {'JRip': jrip_parser,
                 'Apriori': apriori_parser,
                 'RandomForest': rf_parser,
-                'Logistic': logistic_parser
+                'Logistic': logistic_parser,
+                'J48': j48_parser,
+                'NaiveBayes': naive_bayes_parser,
+                'SMO': smo_parser
                 }
                 
 algorithms_path_dict = {'JRip': "weka.classifiers.rules.JRip",
                         'Apriori': "weka.associations.Apriori",
                         'RandomForest': "weka.classifiers.trees.RandomForest",
-                        'Logistic': "weka.classifiers.functions.Logistic"
+                        'Logistic': "weka.classifiers.functions.Logistic",
+                        'J48': "weka.classifiers.trees.J48",
+                        'NaiveBayes': "weka.classifiers.bayes.NaiveBayes",
+                        'SMO': "weka.classifiers.functions.SMO"
                         }
+                        
+kernel_parsers_dict = {'SMO': poly_kernel_parser
+                       }
+                       
+kernel_path_dict = {'SMO': "weka.classifiers.functions.supportVector.PolyKernel"
+                    }
 
 
 def __build_classifier(algorithm_name, data, result_dest=None):
@@ -45,9 +57,46 @@ def __build_classifier(algorithm_name, data, result_dest=None):
     :param result_dest: results destination
     :return: None
     """
-    args, _sufix= parsers_dict[algorithm_name]()#jrip_parser()
+    args, _sufix= parsers_dict[algorithm_name]()
     classifier = Classifier(classname=algorithms_path_dict[algorithm_name],
                       options=args_to_weka_options(args, _sufix))
+    classifier.build_classifier(data)
+    evaluation = evaluate(classifier, data)
+
+    if result_dest:
+        with open(result_dest, 'a') as file:
+            file.write(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
+            file.write(str(classifier))
+            file.write(evaluation.summary())
+    else:
+        print(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
+        print(classifier)
+        print(evaluation.summary())
+        
+        
+def __build_kernel_classifier(algorithm_name, kernel_name, data, result_dest=None):
+    """
+    Function for building kernel clasifier based on arguments we send to function.
+    algorithm_name is for example JRip or Logistic or RandomForest...
+    algorithm_path is for example weka.classifiers.rules.JRip, or 
+    weka.classifiers.trees.RandomForest, ... 
+    
+    Kernel name for now will be the same as algorithm name. Later when we 
+    will want to use different kernels that needs to be changed.
+
+    :param algorithm_name: string
+    :param kernel_name: string
+    :param algorithm_path: string
+    :param data: weka arff data
+    :param result_dest: results destination
+    :return: None
+    """
+    args_cls, _sufix_cls = parsers_dict[algorithm_name]()
+    args_ker, _sufix_ker = kernel_parsers_dict[kernel_name]()
+    kernel = Kernel(classname=kernel_path_dict[kernel_name], options=args_to_weka_options(args_ker, _sufix_ker))
+    classifier = Classifier(classname=algorithms_path_dict[algorithm_name],
+                      options=args_to_weka_options(args_cls, _sufix_cls))
+    classifier.kernel = kernel
     classifier.build_classifier(data)
     evaluation = evaluate(classifier, data)
 
@@ -75,15 +124,15 @@ def __get_header_of_data(data):
 
 def __build_associations(algorithm_name, data, result_dest=None):
     """
-    Function for building ruleset with Apriori algorithm. Information
-    about parameters of algorithm and ruleset are printed to console
-    or writen to file depending on result_dest param.
+    Function for building association algorithms. Based on name we select 
+    proper algorithm.
 
+    :param algorithm_name: string
     :param data: weka arff data
     :param result_dest: results destination
     :return: None
     """
-    args, _sufix = parsers_dict[algorithm_name]()#apriori_parser()
+    args, _sufix = parsers_dict[algorithm_name]()
     associator = Associator(classname=algorithms_path_dict[algorithm_name],
                       options=args_to_weka_options(args, _sufix))
     associator.build_associations(data)
@@ -128,6 +177,21 @@ def main_clasifiers(algorithm_name, result_dest=None, prediction=None):
         data = create_prediction_data(data)
     data.class_is_last()
     __build_classifier(algorithm_name, data, result_dest)
+    
+    
+def main_kernel_clasifiers(algorithm_name, kernel_name, result_dest=None, prediction=None):
+    """
+    Function that is caled for usage of JRip. Based on command
+    line arguments, data will be loaded and JRip rules will be
+    generated with given data.
+
+    :param result_dest: results destination
+    """
+    data = data_loader()
+    if prediction == 'yes':
+        data = create_prediction_data(data)
+    data.class_is_last()
+    __build_kernel_classifier(algorithm_name, kernel_name, data, result_dest)
 
 
 def main_associations(algorithm_name, result_dest=None, prediction=None):
