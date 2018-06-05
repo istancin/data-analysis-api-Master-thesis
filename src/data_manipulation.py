@@ -6,6 +6,8 @@ Created on Sat Jun  2 15:49:05 2018
 """
 import re
 
+from pandas import DataFrame
+
 from converters import arff2df, df2arff
 from parsers import create_prediction_data_parser
 
@@ -79,7 +81,10 @@ def exclude_rows_from_data(data, args):
     :param args: args
     :return: weka arff data
     """
-    df = arff2df(data)
+    if not isinstance(data, DataFrame):
+        df = arff2df(data)
+    else:
+        df = data
     # Go through all conditions and remove selected rows
     conditions = args['excluderow'].split(';')
     for condition in conditions:
@@ -238,6 +243,18 @@ def __put_one_game_in_one_row(df):
     return df
 
 
+def __rename_to_excluderow_arg(args, arg_name):
+    """
+    Helper function that "rename" prediction_excluderow into
+    excluderow so we can use exclude_rows_from_data as it is.
+
+    :param args: dict
+    :return: dict
+    """
+    args['excluderow'] = args[arg_name]
+    return args
+
+
 def create_prediction_data(data):
     """
     Function that creates prediction data. Data for predictions
@@ -290,6 +307,8 @@ def create_prediction_data(data):
     # Removing unneeded columns
     try:
         df.drop(['index', 'OPP_index', 'OPP_GAME_ID', 'OPP_WINNER'], axis=1, inplace=True)
+        if args['after_pred_created_excluderow'] is not None:
+            df = arff2df(exclude_rows_from_data(df, __rename_to_excluderow_arg(args, 'after_pred_created_excluderow')))
         if args['exclude_game_team_id'] == 'yes':
             df.drop(['GAME_ID', 'TEAM_ID', 'OPP_TEAM_ID'], axis=1, inplace=True)
     except:

@@ -162,8 +162,8 @@ def __print_algorithm_header(algorithm_cmd, data_header, algorithm_name):
     header += "\nArguments of algorithm: \n\t"
     header += algorithm_cmd + '\n'
     return header
-        
-        
+
+     
 def main_clasifiers(algorithm_name, result_dest=None, prediction=None):
     """
     Function that is caled for usage of JRip. Based on command

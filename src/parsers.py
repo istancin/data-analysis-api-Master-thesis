@@ -131,6 +131,8 @@ def create_prediction_data_parser():
     cpd_parser.add_argument('--label', help = 'Class label that will be set as last label.')
     cpd_parser.add_argument('--exclude-game-team-id', default='no', choices=['no','yes'],
                            help='If yes, then GAME_ID and TEAM_ID will be removed from dataset.')
+    cpd_parser.add_argument('--after-pred-created-excluderow', 
+                            help='After prediction data is generated, remove some rows based on arguments given. Arguments are the same as for the --excluderow in proces data parser.')
     return vars((cpd_parser.parse_known_args())[0])
     
     
