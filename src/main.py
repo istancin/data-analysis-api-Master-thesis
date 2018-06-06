@@ -2,7 +2,7 @@
 """
 Created on Sun Apr 22 15:35:55 2018
 
-@author: linuxmint
+@author: istancin
 """
 import traceback
 
@@ -14,7 +14,7 @@ from parsers import main_api_parser
 
 def main_api():
     """
-    Main function of whole aplication.
+    Function in which we decides which algorithm to use.
 
     :return: None
     """
@@ -38,11 +38,20 @@ def main_api():
         raise ValueError("Invalid --algorithm parameter.")
 
 
-if __name__ == '__main__':
-    try:
+def main():
+    """
+    Main function of whole application.
+
+    :return: None
+    """
+	try:
         jvm.start()
         main_api()
     except Exception as e:
         print(traceback.format_exc())
     finally:
         jvm.stop()
+
+
+if __name__ == '__main__':
+    main()
