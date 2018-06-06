@@ -268,7 +268,12 @@ def create_prediction_data(data):
     """
     df = arff2df(data)
     args = create_prediction_data_parser()
-    n = int(args['average_n'])
+    if '+' in args['average_n']:
+        n = int(args['average_n'][:-1])
+        expanding = True
+    else:
+        n = int(args['average_n'])
+        expanding = False
     class_label = args['label']
     
     # Sort from first game to last and reset indexes
@@ -282,7 +287,11 @@ def create_prediction_data(data):
         map_index_gameid.append((x[0], x[1].GAME_ID))
         map_index_winner.append((x[0], x[1].WINNER))
     # Calculate means for each team
-    df_grouped_means = df.groupby(['TEAM_ID']).rolling(n).mean()
+    if expanding:
+        df_grouped_means = df.groupby(['TEAM_ID']).expanding(n).mean()
+    else:
+        df_grouped_means = df.groupby(['TEAM_ID']).rolling(n).mean()
+        
     
     # Delete games where at least one team still did not played n games
     game_ids = []

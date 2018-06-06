@@ -6,6 +6,7 @@ Created on Fri Apr 20 10:34:43 2018
 """
 import datetime
 import sys
+import random
 
 from weka.classifiers import Classifier, Kernel
 from weka.associations import Associator
@@ -68,6 +69,9 @@ def __build_classifier(algorithm_name, data, result_dest=None):
             file.write(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
             file.write(str(classifier))
             file.write(evaluation.summary())
+#==============================================================================
+#             file.write(str(evaluation.percent_correct))
+#==============================================================================
     else:
         print(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
         print(classifier)
@@ -105,6 +109,9 @@ def __build_kernel_classifier(algorithm_name, kernel_name, data, result_dest=Non
             file.write(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
             file.write(str(classifier))
             file.write(evaluation.summary())
+#==============================================================================
+#             file.write(str(evaluation.percent_correct))
+#==============================================================================
     else:
         print(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
         print(classifier)
@@ -176,7 +183,19 @@ def main_clasifiers(algorithm_name, result_dest=None, prediction=None):
     if prediction == 'yes':
         data = create_prediction_data(data)
     data.class_is_last()
-    __build_classifier(algorithm_name, data, result_dest)
+    if algorithm_name == "RandomForest":
+        for i in range(5):
+            try:
+                index = (sys.argv).index('--S-rf')
+                del sys.argv[index]
+                del sys.argv[index]
+            except ValueError:
+                pass
+            (sys.argv).append('--S-rf')
+            (sys.argv).append(str(random.randint(0,10000)))
+            __build_classifier(algorithm_name, data, result_dest)
+    else:
+        __build_classifier(algorithm_name, data, result_dest)
     
     
 def main_kernel_clasifiers(algorithm_name, kernel_name, result_dest=None, prediction=None):
