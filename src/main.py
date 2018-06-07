@@ -19,21 +19,28 @@ def main_api():
     :return: None
     """
     args = main_api_parser()
+    zero_stdev = 0
 
     if args['algorithm'] == 'JRip':
-        main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'Apriori':
         main_associations(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
     elif args['algorithm'] == 'RandomForest':
-        main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean, accuracy_std = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        return accuracy_mean, accuracy_std
     elif args['algorithm'] == 'Logistic':
-        main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'J48':
-        main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'NaiveBayes':
-        main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'SMO':
-        main_kernel_clasifiers(args['algorithm'], args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_kernel_clasifiers(args['algorithm'], args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        return accuracy_mean, zero_stdev
     else:
         raise ValueError("Invalid --algorithm parameter.")
 

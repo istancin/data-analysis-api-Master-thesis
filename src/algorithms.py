@@ -10,6 +10,7 @@ import random
 
 from weka.classifiers import Classifier, Kernel
 from weka.associations import Associator
+import numpy as np
 
 from helper import args_to_weka_options
 from data_manipulation import create_prediction_data
@@ -76,6 +77,7 @@ def __build_classifier(algorithm_name, data, result_dest=None):
         print(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
         print(classifier)
         print(evaluation.summary())
+    return evaluation.percent_correct
         
         
 def __build_kernel_classifier(algorithm_name, kernel_name, data, result_dest=None):
@@ -116,6 +118,7 @@ def __build_kernel_classifier(algorithm_name, kernel_name, data, result_dest=Non
         print(__print_algorithm_header(classifier.to_commandline(), __get_header_of_data(data), algorithm_name))
         print(classifier)
         print(evaluation.summary())
+    return evaluation.percent_correct
 
 
 def __get_header_of_data(data):
@@ -184,6 +187,7 @@ def main_clasifiers(algorithm_name, result_dest=None, prediction=None):
         data = create_prediction_data(data)
     data.class_is_last()
     if algorithm_name == "RandomForest":
+        temp = []
         for i in range(5):
             try:
                 index = (sys.argv).index('--S-rf')
@@ -193,9 +197,10 @@ def main_clasifiers(algorithm_name, result_dest=None, prediction=None):
                 pass
             (sys.argv).append('--S-rf')
             (sys.argv).append(str(random.randint(0,10000)))
-            __build_classifier(algorithm_name, data, result_dest)
+            temp.append(__build_classifier(algorithm_name, data, result_dest))
+        return np.array(temp).mean(), np.array(temp).std()
     else:
-        __build_classifier(algorithm_name, data, result_dest)
+        return __build_classifier(algorithm_name, data, result_dest)
     
     
 def main_kernel_clasifiers(algorithm_name, kernel_name, result_dest=None, prediction=None):
@@ -210,7 +215,7 @@ def main_kernel_clasifiers(algorithm_name, kernel_name, result_dest=None, predic
     if prediction == 'yes':
         data = create_prediction_data(data)
     data.class_is_last()
-    __build_kernel_classifier(algorithm_name, kernel_name, data, result_dest)
+    return __build_kernel_classifier(algorithm_name, kernel_name, data, result_dest)
 
 
 def main_associations(algorithm_name, result_dest=None, prediction=None):
