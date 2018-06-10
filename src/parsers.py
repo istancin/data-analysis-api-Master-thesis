@@ -133,6 +133,7 @@ def create_prediction_data_parser():
                            help='If yes, then GAME_ID and TEAM_ID will be removed from dataset.')
     cpd_parser.add_argument('--after-pred-created-excluderow', 
                             help='After prediction data is generated, remove some rows based on arguments given. Arguments are the same as for the --excluderow in proces data parser.')
+    cpd_parser.add_argument('--save-prediction-data', default='no', help = 'If we want to save calculated prediction data, we pass path to destination in this argument.')
     return vars((cpd_parser.parse_known_args())[0])
     
     

@@ -326,5 +326,9 @@ def create_prediction_data(data):
     # Leave only one row per game
     __leave_one_row_per_game(df)
     
+    # Saving prediction data
+    if args['save_prediction_data'] != 'no':
+        df.to_csv(args['save_prediction_data'], index=False)
+    
     # Class label put as last and return
     return set_as_last_label(df2arff(df), class_label)

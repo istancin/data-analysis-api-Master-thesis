@@ -155,10 +155,10 @@ def main():
     :yield: list
     """
     const = ['/home/linuxmint/main.py', '--filetype', 'csv', 
-        '--resultdest', 'results.txt',
+        #'--resultdest', 'results.txt',
         '--label', 'WINNER', '--I-rf', '200',
         '--evaluation', 'cross_validate',
-        '--prediction', 'yes',
+        '--prediction', 'no',
         '--C-apriori', '0.6', '--N-apriori', '300', '--N-jrip', '60', 
         '--L-csvload', 'WINNER:1,0']
         
@@ -167,21 +167,19 @@ def main():
 #     # const part of arguments with __permutations_generator 
 #==============================================================================
     list_variabil_dict = [{'--algorithm': ['JRip', 'RandomForest', 'J48', 'Logistic', 'NaiveBayes', 'SMO'], 
-    '--path': ['/home/linuxmint/Downloads/dataset_13_14.csv', '/home/linuxmint/Downloads/dataset_14_15.csv', '/home/linuxmint/Downloads/dataset_15_16.csv', '/home/linuxmint/Downloads/dataset_16_17.csv', '/home/linuxmint/Downloads/dataset_17_18.csv'],
-    '--average-n': ['7+', '8+', '9+', '10+', '11+', '12+'],
-	'--excludecol': ['WIN_GROUP,WIN_GROUP_OPP,SOME2,SOME2_OPP,FG_PCT,FG_PCT_OPP,MIN,TEAM_CITY,TEAM_ABBREAVIATION,TEAM_NAME,WINS,EPR1,EPR2,EPR3,EPR4,TO,TO1,TO2,TO3,SOME,SOME1,SOME3,SOME4,SOME5,SOME6,SOME11,SOME22,SOME33,SOME44,SOME55,SOME66,NEW,NEW1,OLD,OLD1,FG_PCT_OPP,WINS_OPP,EPR1_OPP,EPR2_OPP,EPR3_OPP,EPR4_OPP,TO_OPP,TO1_OPP,TO2_OPP,TO3_OPP,SOME_OPP,SOME1_OPP,SOME3_OPP,SOME4_OPP,SOME5_OPP,SOME6_OPP,NEW_OPP,NEW1_OPP,OLD_OPP'],
+    '--path': ['/home/linuxmint/Downloads/dataset_13_14_prediction.csv', '/home/linuxmint/Downloads/dataset_14_15_prediction.csv', '/home/linuxmint/Downloads/dataset_15_16_prediction.csv', '/home/linuxmint/Downloads/dataset_16_17_prediction.csv', '/home/linuxmint/Downloads/dataset_17_18_prediction.csv'],
+	#'--excludecol': ['WIN_GROUP,WIN_GROUP_OPP,SOME2,SOME2_OPP,FG_PCT,FG_PCT_OPP,MIN,TEAM_CITY,TEAM_ABBREAVIATION,TEAM_NAME,WINS,EPR1,EPR2,EPR3,EPR4,TO,TO1,TO2,TO3,SOME,SOME1,SOME3,SOME4,SOME5,SOME6,SOME11,SOME22,SOME33,SOME44,SOME55,SOME66,NEW,NEW1,OLD,OLD1,FG_PCT_OPP,WINS_OPP,EPR1_OPP,EPR2_OPP,EPR3_OPP,EPR4_OPP,TO_OPP,TO1_OPP,TO2_OPP,TO3_OPP,SOME_OPP,SOME1_OPP,SOME3_OPP,SOME4_OPP,SOME5_OPP,SOME6_OPP,NEW_OPP,NEW1_OPP,OLD_OPP'],
+    '--includecol': ['AST,OPP_AST,WINNER', 'SAST,OPP_SAST,WINNER', 'AST,SAST,FTAST,PASS,OPP_AST,OPP_SAST,OPP_FTAST,OPP_PASS,WINNER', 'EPR,OPP_EPR,WINNER', 'EPR,AST,OPP_EPR,OPP_AST,WINNER', 'AST,AST_OPP,OPP_AST,OPP_AST_OPP,WINNER', 'SAST,SAST_OPP,OPP_SAST,OPP_SAST_OPP,WINNER', 'AST,SAST,FTAST,PASS,AST_OPP,SAST_OPP,FTAST_OPP,PASS_OPP,OPP_AST,OPP_SAST,OPP_FTAST,OPP_PASS,OPP_AST_OPP,OPP_SAST_OPP,OPP_FTAST_OPP,OPP_PASS_OPP,WINNER', 'EPR,EPR_OPP,OPP_EPR,OPP_EPR_OPP,WINNER', 'EPR,AST,EPR_OPP,AST_OPP,OPP_EPR,OPP_AST,OPP_EPR_OPP,OPP_AST_OPP,WINNER'],
 	'--exclude-game-team-id': ['no']
         },
-		{'--algorithm': ['JRip', 'RandomForest', 'J48', 'Logistic', 'NaiveBayes', 'SMO'], 
-    '--path': ['/home/linuxmint/Downloads/dataset_13_14.csv', '/home/linuxmint/Downloads/dataset_14_15.csv', '/home/linuxmint/Downloads/dataset_15_16.csv', '/home/linuxmint/Downloads/dataset_16_17.csv', '/home/linuxmint/Downloads/dataset_17_18.csv'],
-    '--average-n': ['8+'],
-	'--includecol': ['AST,WINNER,GAME_ID,TEAM_ID','AST,SAST,FTAST,PASS,WINNER,GAME_ID,TEAM_ID', 'EPR,WINNER,GAME_ID,TEAM_ID', 'AST,AST_OPP,WINNER,GAME_ID,TEAM_ID','AST,SAST,FTAST,PASS,AST_OPP,SAST_OPP,FTAST_OPP,PASS_OPP,WINNER,GAME_ID,TEAM_ID', 'EPR,EPR_OPP,WINNER,GAME_ID,TEAM_ID'],
-	'--exclude-game-team-id': ['yes']
-        }
+        {'--algorithm': ['JRip', 'RandomForest', 'J48', 'Logistic', 'NaiveBayes', 'SMO'], 
+    '--path': ['/home/linuxmint/Downloads/dataset_13_14_prediction.csv', '/home/linuxmint/Downloads/dataset_14_15_prediction.csv', '/home/linuxmint/Downloads/dataset_15_16_prediction.csv', '/home/linuxmint/Downloads/dataset_16_17_prediction.csv', '/home/linuxmint/Downloads/dataset_17_18_prediction.csv'],
+	'--includecol': ['UFG_PCT,OPP_UFG_PCT,WINNER', 'CFG_PCT,OPP_CFG_PCT,WINNER', 'UFG_PCT,CFG_PCT,OPP_UFG_PCT,OPP_CFG_PCT,WINNER', 'SOME,OPP_SOME,WINNER', 'SOME1,OPP_SOME1,WINNER', 'SOME2,OPP_SOME2,WINNER', 'SOME3,OPP_SOME3,WINNER', 'SOME4,OPP_SOME4,WINNER', 'SOME5,OPP_SOME5,WINNER', 'SOME6,OPP_SOME6,WINNER', 'SOME22,OPP_SOME22,WINNER' ]
+     }
         ]
         
-    stats_configs = [(('--average-n',), ('--algorithm', '--path'), 'n_analysis.xlsx'),
-                     (('--path',), ('--algorithm', '--includecol'), 'epr_analysis.xlsx')]
+    stats_configs = [(('--path',), ('--algorithm', '--includecol'), 'epr_ast_analysis.xlsx'),
+                     (('--path',), ('--algorithm', '--includecol'), 'UCFG_analysis.xlsx')]
     
     
     column = list()

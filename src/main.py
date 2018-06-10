@@ -22,24 +22,24 @@ def main_api():
     zero_stdev = 0
 
     if args['algorithm'] == 'JRip':
-        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['create_prediction_data'])
         return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'Apriori':
-        main_associations(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        main_associations(args['algorithm'], result_dest=args['resultdest'], prediction=args['create_prediction_data'])
     elif args['algorithm'] == 'RandomForest':
-        accuracy_mean, accuracy_std = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean, accuracy_std = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['create_prediction_data'])
         return accuracy_mean, accuracy_std
     elif args['algorithm'] == 'Logistic':
-        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['create_prediction_data'])
         return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'J48':
-        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['create_prediction_data'])
         return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'NaiveBayes':
-        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_clasifiers(args['algorithm'], result_dest=args['resultdest'], prediction=args['create_prediction_data'])
         return accuracy_mean, zero_stdev
     elif args['algorithm'] == 'SMO':
-        accuracy_mean = main_kernel_clasifiers(args['algorithm'], args['algorithm'], result_dest=args['resultdest'], prediction=args['prediction'])
+        accuracy_mean = main_kernel_clasifiers(args['algorithm'], args['algorithm'], result_dest=args['resultdest'], prediction=args['create_prediction_data'])
         return accuracy_mean, zero_stdev
     else:
         raise ValueError("Invalid --algorithm parameter.")
