@@ -277,7 +277,9 @@ def create_prediction_data(data):
     class_label = args['label']
     
     # Sort from first game to last and reset indexes
-    df.sort_values('GAME_ID', axis=0, inplace=True)
+    df['indexcol'] = df.index
+    df.sort_values(['GAME_ID', 'indexcol'], axis=0, inplace=True)
+    del df['indexcol']
     df.reset_index(inplace=True)
     
     # Create mapping for index and GAME_ID and WINNER. We will need it later.
